@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { SearchBar } from '@/components/SearchBar';
 import { MovieCard } from '@/components/MovieCard';
 import { getRecommendations } from '@/lib/recommendations';
-import { getMoviesByTitles } from '@/lib/tmdb';
 import { Movie } from '@/types/movie';
 import { Film, Sparkles } from 'lucide-react';
 
@@ -20,8 +19,7 @@ export default function Home() {
     setSearchedMovie(query);
 
     try {
-      const recommendedTitles = await getRecommendations(query);
-      const movies = await getMoviesByTitles(recommendedTitles);
+      const movies = await getRecommendations(query);
 
       if (movies.length === 0) {
         setError('No recommendations found. Try searching for another movie.');

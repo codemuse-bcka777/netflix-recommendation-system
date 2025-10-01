@@ -2,7 +2,7 @@
 
 import { Movie } from '@/types/movie';
 import { getPosterUrl } from '@/lib/tmdb';
-import { Star } from 'lucide-react';
+import { Star, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
 interface MovieCardProps {
@@ -26,6 +26,14 @@ export function MovieCard({ movie }: MovieCardProps) {
         `}
       >
         <div className="relative aspect-[2/3] overflow-hidden">
+          {/* Similarity Badge */}
+          {movie.similarity && (
+            <div className="absolute top-2 right-2 z-10 bg-orange-red text-cream px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" />
+              {movie.similarity}%
+            </div>
+          )}
+          
           <img
             src={getPosterUrl(movie.poster_path, 'medium')}
             alt={movie.title}
@@ -57,6 +65,11 @@ export function MovieCard({ movie }: MovieCardProps) {
             <span className="text-desaturated-teal text-sm">
               {movie.release_date ? `(${movie.release_date.split('-')[0]})` : ''}
             </span>
+            {movie.similarity && (
+              <span className="text-orange-red text-sm font-semibold ml-auto">
+                {movie.similarity}% match
+              </span>
+            )}
           </div>
 
           <div

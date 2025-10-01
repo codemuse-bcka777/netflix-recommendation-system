@@ -8,6 +8,7 @@ export interface Movie {
   vote_average: number;
   genre_ids: number[];
   genres?: Genre[];
+  similarity?: number; // Similarity percentage (0-100)
 }
 
 export interface Genre {
