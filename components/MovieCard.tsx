@@ -40,7 +40,20 @@ export function MovieCard({ movie }: MovieCardProps) {
             className="w-full h-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = 'https://via.placeholder.com/342x513/874F41/FBE9D0?text=No+Poster';
+              // Create a local SVG placeholder instead of using external service
+              const svgPlaceholder = `data:image/svg+xml;base64,${btoa(`
+                <svg width="342" height="513" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="100%" height="100%" fill="#874F41"/>
+                  <rect x="20" y="20" width="302" height="473" fill="#244855" stroke="#FBE9D0" stroke-width="2"/>
+                  <text x="50%" y="45%" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#FBE9D0">
+                    No Poster Available
+                  </text>
+                  <text x="50%" y="55%" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#90AEAD">
+                    ${movie.title}
+                  </text>
+                </svg>
+              `)}`;
+              target.src = svgPlaceholder;
             }}
           />
           <div

@@ -101,14 +101,36 @@ export function getPosterUrl(
   size: keyof typeof POSTER_SIZES = 'medium'
 ): string {
   if (!posterPath) {
-    return '/placeholder-movie.png';
+    // Return a data URI SVG placeholder instead of a file that doesn't exist
+    const svgPlaceholder = `data:image/svg+xml;base64,${btoa(`
+      <svg width="342" height="513" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#874F41"/>
+        <rect x="20" y="20" width="302" height="473" fill="#244855" stroke="#FBE9D0" stroke-width="2"/>
+        <text x="50%" y="45%" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#FBE9D0">
+          No Poster Available
+        </text>
+        <circle cx="171" cy="200" r="30" fill="#FBE9D0" opacity="0.3"/>
+        <rect x="141" y="185" width="60" height="30" fill="#FBE9D0" opacity="0.3" rx="5"/>
+      </svg>
+    `)}`;
+    return svgPlaceholder;
   }
   return `${TMDB_IMAGE_BASE_URL}/${POSTER_SIZES[size]}${posterPath}`;
 }
 
 export function getBackdropUrl(backdropPath: string | null): string {
   if (!backdropPath) {
-    return '/placeholder-backdrop.png';
+    // Return a data URI SVG placeholder instead of a file that doesn't exist
+    const svgPlaceholder = `data:image/svg+xml;base64,${btoa(`
+      <svg width="1280" height="720" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#244855"/>
+        <rect x="40" y="40" width="1200" height="640" fill="#874F41" stroke="#FBE9D0" stroke-width="3"/>
+        <text x="50%" y="50%" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" fill="#FBE9D0">
+          No Backdrop Available
+        </text>
+      </svg>
+    `)}`;
+    return svgPlaceholder;
   }
   return `${TMDB_IMAGE_BASE_URL}/w1280${backdropPath}`;
 }

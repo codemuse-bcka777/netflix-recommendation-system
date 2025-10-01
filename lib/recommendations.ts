@@ -1,4 +1,5 @@
 import { Movie } from '@/types/movie';
+import { searchMovies } from '@/lib/tmdb';
 
 export async function getRecommendations(movieTitle: string): Promise<Movie[]> {
   const mockRecommendations: Record<string, Array<{title: string, similarity: number}>> = {
@@ -55,18 +56,50 @@ export async function getRecommendations(movieTitle: string): Promise<Movie[]> {
     ];
   }
 
-  // Convert to Movie objects with similarity scores
-  return recommendationData.map((rec, index) => ({
-    id: Date.now() + index, // Generate unique IDs
-    title: rec.title,
-    overview: `A highly recommended movie with ${rec.similarity}% similarity to your search.`,
-    poster_path: null,
-    backdrop_path: null,
-    release_date: '2020-01-01',
-    vote_average: 8.0 + (rec.similarity / 100), // Mock rating based on similarity
-    vote_count: 1000,
-    genre_ids: [18],
-    genres: [],
-    similarity: rec.similarity
-  }));
+  // Fetch real movie data from TMDB for each recommendation
+  const movies: Movie[] = [];
+  
+  for (const rec of recommendationData) {
+    try {
+      const searchResults = await searchMovies(rec.title);
+      if (searchResults.length > 0) {
+        const movie = { ...searchResults[0] };
+        movie.similarity = rec.similarity;
+        movies.push(movie);
+      } else {
+        // Fallback if movie not found in TMDB
+        movies.push({
+          id: Date.now() + Math.random(),
+          title: rec.title,
+          overview: `A highly recommended movie with ${rec.similarity}% similarity to your search.`,
+          poster_path: null,
+          backdrop_path: null,
+          release_date: '2020-01-01',
+          vote_average: 8.0,
+          vote_count: 1000,
+          genre_ids: [18],
+          genres: [],
+          similarity: rec.similarity
+        });
+      }
+    } catch (error) {
+      console.error(`Error fetching data for ${rec.title}:`, error);
+      // Fallback movie object
+      movies.push({
+        id: Date.now() + Math.random(),
+        title: rec.title,
+        overview: `A highly recommended movie with ${rec.similarity}% similarity to your search.`,
+        poster_path: null,
+        backdrop_path: null,
+        release_date: '2020-01-01',
+        vote_average: 8.0,
+        vote_count: 1000,
+        genre_ids: [18],
+        genres: [],
+        similarity: rec.similarity
+      });
+    }
+  }
+
+  return movies;
 }
